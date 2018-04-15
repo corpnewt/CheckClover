@@ -106,7 +106,7 @@ if checking == "e":
 else:
     # Getting local file - must be named CLOVERX64.efi or BOOTX64.efi
     while True:
-        os.system("clear")
+        cls()
         menu = grab("Please drag and drop a CLOVERX64.efi or BOOTX64.efi file:  ")
         path = check_path(menu)
         if path and (os.path.basename(path).lower() in [ "cloverx64.efi", "bootx64.efi" ]):
