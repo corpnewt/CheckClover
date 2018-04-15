@@ -1,5 +1,14 @@
 #!/usr/bin/python
-import os, time
+import os, time, sys
+
+def cls():
+	os.system('cls' if os.name=='nt' else 'clear')
+
+def grab(prompt):
+	if sys.version_info >= (3, 0):
+		return input(prompt)
+	else:
+		return str(raw_input(prompt))
 
 def check_path(path):
     # Loop until we either get a working path - or no changes
@@ -52,21 +61,24 @@ def check_path(path):
             path = path[1:]
     return None
 
-checking = "e"
 
-while True:
-    os.system("clear")
-    menu = raw_input("Check EFI or local file? (E/L):  ")
-    if menu.lower() == "e":
-        checking = "e"
-        break
-    if menu.lower() == "l":
-        checking = "l"
-        break
-    continue
+# Default to local file - in case we're in unknown territory
+checking = "l"
+
+if not os.name == "nt":
+    while True:
+        cls()
+        menu = grab("Check EFI or local file? (E/L):  ")
+        if menu.lower() == "e":
+            checking = "e"
+            break
+        if menu.lower() == "l":
+            checking = "l"
+            break
+        continue
 
 if checking == "e":
-    print("Checking for EFI...")
+    print("Checking for mounted EFI...")
     try:
         volume_list = os.listdir("/Volumes/")
     except:
@@ -84,20 +96,24 @@ if checking == "e":
     print("   Found ESP at \"{}\"".format(efi))
     print("Verifying structure...")
     c = os.path.join(efi, "EFI/CLOVER/CLOVERX64.efi")
-    if not os.path.exists(os.path.join(efi, "EFI/CLOVER/CLOVERX64.efi")):
-        print("   Clover not found on EFI!  Aborting!")
-        exit(1)
+    b = os.path.join(efi, "EFI/BOOT/BOOTX64.efi")
+    if not os.path.exists(c):
+        if not os.path.exists(b):
+            print("   CLOVERX64.efi and BOOTX64.efi not found on EFI!  Aborting!")
+            exit(1)
+        # Guess we're just getting the BOOTX64.efi
+        c = b
 else:
-    # Getting local file - must be named CLOVERX64.efi
+    # Getting local file - must be named CLOVERX64.efi or BOOTX64.efi
     while True:
         os.system("clear")
-        menu = raw_input("Please drag and drop a CLOVERX64.efi file:  ")
+        menu = grab("Please drag and drop a CLOVERX64.efi or BOOTX64.efi file:  ")
         path = check_path(menu)
-        if path and os.path.basename(path).lower() == "cloverx64.efi":
+        if path and (os.path.basename(path).lower() in [ "cloverx64.efi", "bootx64.efi" ]):
             # Got it!
             c = path
             break
-        print("Either that file doesn't exist - or it's not named CLOVERX64.efi - try again.")
+        print("Either that file doesn't exist - or it's not named CLOVERX64.efi or BOOTX64.efi - try again.")
         time.sleep(3)
 
 # Hex for "Clover revision: "
