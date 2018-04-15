@@ -24,3 +24,7 @@ if "!arg!"=="" (
 ) else (
     "!python!" "!arg!"
 )
+
+echo.
+echo Press [enter] to quit...
+pause > nul
