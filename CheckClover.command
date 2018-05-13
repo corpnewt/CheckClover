@@ -129,15 +129,16 @@ location += vers_add
 version = ""
 while True:
     try:
-        vnum = s[location].decode("utf-8")
+        vnum = s[location:location+1].decode("utf-8")
         numtest = int(vnum)
         version += vnum
     except:
-        print("Hit non-number character - breaking...")
+        # print("Hit non-number character - breaking...")
         break
     location += 1
 if not len(version):
     print("Didn't find a version number!")
+    exit(1)
 print("\n{}".format("#"*70))
 print("Found Clover version {}".format(version).center(70))
 print("{}\n\n".format("#"*70))
