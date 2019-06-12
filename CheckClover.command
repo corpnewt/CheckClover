@@ -142,4 +142,7 @@ if not len(version):
 print("\n{}".format("#"*70))
 print("Found Clover version {}".format(version).center(70))
 print("{}\n\n".format("#"*70))
+if os.name == "nt":
+    # Pause before exiting on windows
+    grab("Press [enter] to exit...")
 exit()
